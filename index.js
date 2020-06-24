@@ -10,7 +10,15 @@ app.use(bodyParser.json());
 const employee = require('./routes/employee');
 app.use('/employee', employee);
 
-mongoose.connect('mongodb://localhost:27017/mernstack', {
+if(process.env.NODE_ENV === 'production') {
+    app.use(express.static('client/build'));
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
+    })
+}
+const uri = process.env.mongodb || 'mongodb://localhost:27017/mernstack'
+
+mongoose.connect(uri, {
     useNewUrlParser: true,
     useFindAndModify: false
 },(err)=>{
